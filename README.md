@@ -1,4 +1,4 @@
-# ESP32 C++ Code for Controlling 5-Axis Robot Arm (Right)
+# ESP32 C++ Code for Controlling 5-Axis Robot Arm (Left)
 
 We need the following items.
 
@@ -56,7 +56,7 @@ We need the following items.
 Range: [0°, 90°]
 
 - 0° (0 rad): The arm moves closer to the body.
-- 90° (1.57 rad): The arm opens to the right.
+- 90° (1.57 rad): The arm opens to the left.
 
 
 
@@ -76,11 +76,10 @@ Range: [0°, 180°]
 
 ### J4 (Forearm and Arm)
 
-- Range: [0°, 120°]
+- Range: [60°, 180°]
 
-  - 0° (0 rad): The arm straightens.
-
-  - 120° (1.22 rad): The arm bends.
+  - 60° (1.05 rad): The arm bends.
+- 180° (3.14 rad): The arm straightens.
 
 
 
@@ -103,8 +102,8 @@ Range: [0°, 180°]
 We've defined the max. and min. angles for servos at the following code.
 
 ```c++
-const uint8_t servoMinAngles[] = {0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 90, 180, 120, 70};
+const uint8_t servoMinAngles[] = {0, 0, 0, 60, 0};
+const uint8_t servoMaxAngles[] = {180, 90, 180, 180, 70};
 ```
 
 
