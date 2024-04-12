@@ -1,4 +1,4 @@
-# ESP32 C++ Code for Controlling Robot Arm
+# ESP32 C++ Code for Controlling 5-Axis Robot Arm (Right)
 
 We need the following items.
 
@@ -40,6 +40,62 @@ We need the following items.
 
 
 
+## Angles
+
+### J1 (The arm lifts forward, upward, and lowers down)
+
+- Range: [0°, 180°]
+  - 0° (0 rad): The arm lowers down.
+  - 90° (1.57 rad): The arm lifts forward.
+  - 180° (3.14 rad): The arm lifts upward.
+
+
+
+### J2
+
+Range: [0°, 90°]
+
+- 0° (0 rad): The arm moves closer to the body.
+- 90° (1.57 rad): The arm opens to the right.
+
+
+
+### J3
+
+Range: [0°, 180°]
+
+- The direction when J2 is 0°.
+
+  - 0° (0 rad): The forearm points left.
+
+  - 90° (1.57 rad): The forearm points forward.
+
+  - 180° (3.14 rad): The forearm points right.
+
+
+
+### J4 (Forearm and Arm)
+
+- Range: [0°, 120°]
+
+  - 0° (0 rad): The arm straightens.
+
+  - 120° (1.22 rad): The arm bends.
+
+
+
+### J5 (Hand/Fixture)
+
+- Range: [0°, 70°]
+
+  - 0° (0 rad): Fixture clamps up.
+
+  - 70° (1.22 rad): Fixture opens up.
+
+
+
+
+
 ## Code Definition and Features
 
 ### The Maximum and Minimum Servo Angles
@@ -48,7 +104,7 @@ We've defined the max. and min. angles for servos at the following code.
 
 ```c++
 const uint8_t servoMinAngles[] = {0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 120, 160, 180, 70};
+const uint8_t servoMaxAngles[] = {180, 90, 180, 120, 70};
 ```
 
 
@@ -65,19 +121,19 @@ void setup() {
         currentAngles[i] = (float) servoMinAngles[i];
         switch (i) {
             case 0:
-                targetAngles[0] = 90;
+                targetAngles[0] = 0;
                 break;
             case 1:
                 targetAngles[1] = 0;
                 break;
             case 2:
-                targetAngles[2] = 160;
+                targetAngles[2] = 90;
                 break;
             case 3:
-                targetAngles[3] = 50;
+                targetAngles[3] = 90;
                 break;
             case 4:
-                targetAngles[4] = 10;
+                targetAngles[4] = 30;
                 break;
             default:
                 break;

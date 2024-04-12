@@ -8,7 +8,7 @@
 #define SERIAL_WRITE_DELAY 250
 const uint8_t NUM_OF_SERVOS = 5;
 const uint8_t servoMinAngles[] = {0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 120, 160, 180, 70};
+const uint8_t servoMaxAngles[] = {180, 90, 180, 120, 70};
 
 // Enum to define the arm actions
 enum class ArmAction {
@@ -51,19 +51,19 @@ void setup() {
         currentAngles[i] = (float) servoMinAngles[i];
         switch (i) {
             case 0:
-                targetAngles[0] = 90;
+                targetAngles[0] = 0;
                 break;
             case 1:
                 targetAngles[1] = 0;
                 break;
             case 2:
-                targetAngles[2] = 160;
+                targetAngles[2] = 90;
                 break;
             case 3:
-                targetAngles[3] = 50;
+                targetAngles[3] = 90;
                 break;
             case 4:
-                targetAngles[4] = 10;
+                targetAngles[4] = 30;
                 break;
             default:
                 break;
