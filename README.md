@@ -45,9 +45,9 @@ We need the following items.
 ### J1 (The arm lifts forward, upward, and lowers down)
 
 - Range: [0°, 180°]
-  - 0° (0 rad): The arm lowers down.
+  - 0° (0 rad): The arm lowers upward.
   - 90° (1.57 rad): The arm lifts forward.
-  - 180° (3.14 rad): The arm lifts upward.
+  - 180° (3.14 rad): The arm lifts down.
 
 
 
