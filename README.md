@@ -53,10 +53,10 @@ We need the following items.
 
 ### J2
 
-Range: [0°, 90°]
+Range: [80°, 180°]
 
-- 0° (0 rad): The arm moves closer to the body.
-- 90° (1.57 rad): The arm opens to the right.
+- 80° (0 rad): The arm opens to the right.
+- 180° (3.14 rad): The arm moves closer to the body.
 
 
 
@@ -64,7 +64,7 @@ Range: [0°, 90°]
 
 Range: [0°, 180°]
 
-- The direction when J2 is 0°.
+- The direction when J2 is 180°.
 
   - 0° (0 rad): The forearm points left.
 
@@ -94,8 +94,6 @@ Range: [0°, 180°]
 
 
 
-
-
 ## Code Definition and Features
 
 ### The Maximum and Minimum Servo Angles
@@ -103,8 +101,8 @@ Range: [0°, 180°]
 We've defined the max. and min. angles for servos at the following code.
 
 ```c++
-const uint8_t servoMinAngles[] = {0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 90, 180, 120, 70};
+const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0};
+const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 70};
 ```
 
 
@@ -121,19 +119,19 @@ void setup() {
         currentAngles[i] = (float) servoMinAngles[i];
         switch (i) {
             case 0:
-                targetAngles[0] = 0;
+                targetAngles[0] = 10;
                 break;
             case 1:
-                targetAngles[1] = 0;
+                targetAngles[1] = 170;
                 break;
             case 2:
-                targetAngles[2] = 90;
+                targetAngles[2] = 80;
                 break;
             case 3:
-                targetAngles[3] = 90;
+                targetAngles[3] = 30;
                 break;
             case 4:
-                targetAngles[4] = 30;
+                targetAngles[4] = 10;
                 break;
             default:
                 break;
