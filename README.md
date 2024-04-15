@@ -120,16 +120,16 @@ void setup() {
         currentAngles[i] = (float) servoMinAngles[i];
         switch (i) {
             case 0:
-                targetAngles[0] = 0;
+                targetAngles[0] = 180;
                 break;
             case 1:
-                targetAngles[1] = 0;
+                targetAngles[1] = 10;
                 break;
             case 2:
-                targetAngles[2] = 90;
+                targetAngles[2] = 100;
                 break;
             case 3:
-                targetAngles[3] = 90;
+                targetAngles[3] = 150;
                 break;
             case 4:
                 targetAngles[4] = 30;
