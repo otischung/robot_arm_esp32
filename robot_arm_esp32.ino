@@ -6,9 +6,10 @@
 #define UPDATE_ARM_DELAY 1.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
-const uint8_t NUM_OF_SERVOS = 5;
-const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 70};
+const uint8_t NUM_OF_SERVOS = 7;
+const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0};
+const uint8_t servoMaxAngles[] = {180, 180, 180, 90, 180, 90, 70};
+const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 10};
 
 // Enum to define the arm actions
 enum class ArmAction {
@@ -49,25 +50,7 @@ void setup() {
     // Create the arm control task
     for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
         currentAngles[i] = (float) servoMinAngles[i];
-        switch (i) {
-            case 0:
-                targetAngles[0] = 10;
-                break;
-            case 1:
-                targetAngles[1] = 170;
-                break;
-            case 2:
-                targetAngles[2] = 80;
-                break;
-            case 3:
-                targetAngles[3] = 30;
-                break;
-            case 4:
-                targetAngles[4] = 10;
-                break;
-            default:
-                break;
-        }
+        targetAngles[i] = servoInitAngles[i];
     }
     // Create the arm control task
     Serial.println("xTaskCreatePinnedToCore armControlTaskFunction ");

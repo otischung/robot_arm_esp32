@@ -64,7 +64,7 @@ Range: [80°, 180°]
 
 Range: [0°, 180°]
 
-- The direction when J2 is 180°.
+- The direction valid when J2 is 180°.
 
   - 0° (0 rad): The forearm points left.
 
@@ -76,15 +76,36 @@ Range: [0°, 180°]
 
 ### J4 (Forearm and Arm)
 
-- Range: [0°, 120°]
+Range: [0°, 90°]
 
-  - 0° (0 rad): The arm straightens.
+- 0° (0 rad): The arm bends.
 
-  - 120° (1.22 rad): The arm bends.
+- 90° (1.57 rad): The arm straightens.
 
 
 
-### J5 (Hand/Fixture)
+### J5 (Wrist)
+
+Range: [0°, 180°]
+
+- The direction valid when J6 is 90°.
+  - 0° (0 rad): The forearm points right.
+  - 90° (1.57 rad): The forearm points forward.
+  - 180° (3.14 rad): The forearm points left.
+
+
+
+### J6 (Wrist)
+
+Range: [0°, 90°]
+
+- 0° (0 rad): The fixture is horizontal.
+
+- 90° (1.57 rad): The fixture is vertical.
+
+
+
+### J7 (Hand/Fixture)
 
 - Range: [0°, 70°]
 
@@ -101,8 +122,8 @@ Range: [0°, 180°]
 We've defined the max. and min. angles for servos at the following code.
 
 ```c++
-const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 70};
+const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0};
+const uint8_t servoMaxAngles[] = {180, 180, 180, 90, 180, 90, 70};
 ```
 
 
@@ -112,32 +133,6 @@ const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 70};
 The initial pose is defined via the following code.
 
 ```c++
-void setup() {
-    // ...
-    // Create the arm control task
-    for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
-        currentAngles[i] = (float) servoMinAngles[i];
-        switch (i) {
-            case 0:
-                targetAngles[0] = 10;
-                break;
-            case 1:
-                targetAngles[1] = 170;
-                break;
-            case 2:
-                targetAngles[2] = 80;
-                break;
-            case 3:
-                targetAngles[3] = 30;
-                break;
-            case 4:
-                targetAngles[4] = 10;
-                break;
-            default:
-                break;
-        }
-    }
-    // ...
-}
+const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 10};
 ```
 
