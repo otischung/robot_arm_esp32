@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "armDriver.h"
 
-#define UPDATE_ARM_DELAY 1.0
+#define UPDATE_ARM_DELAY 10.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
 const uint8_t NUM_OF_SERVOS = 5;
@@ -146,9 +146,9 @@ void serialCommunicationTaskFunction(void *parameter) {
         if (Serial.available()) {
             // Read the incoming serial data
             jsonString = Serial.readStringUntil('\n');
-            // String jsonString = Serial.readString();
             Serial.println("receive:");
             Serial.println(jsonString);
+
             // Parse the JSON string
             StaticJsonDocument<256> doc;
             DeserializationError error = deserializeJson(doc, jsonString);
@@ -163,15 +163,26 @@ void serialCommunicationTaskFunction(void *parameter) {
                     // Get the "servo_target_angles" array from the JSON document
                     JsonArray servoAngles = doc["servo_target_angles"].as<JsonArray>();
 
-                    // Check if the array size matches the number of servos
-                    if (servoAngles.size() == NUM_OF_SERVOS) {
-                        // Update the target angles in the ArmManager
-                        for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
-                            targetAngles[i] = servoAngles[i];
+                    // Only process the first NUM_OF_SERVOS values
+                    uint8_t anglesToProcess = min(NUM_OF_SERVOS, static_cast<uint8_t>(servoAngles.size()));
+
+                    for (uint8_t i = 0; i < anglesToProcess; i++) {
+                        int angle = servoAngles[i];
+                        // Check if the angle is -1, which means no movement for that servo
+                        if (angle != -1) {
+                            targetAngles[i] = angle;
+                        } else {
+                            // If angle is -1, do not change the target angle
+                            Serial.print("Servo ");
+                            Serial.print(i);
+                            Serial.println(" will not move.");
                         }
-                    } else {
-                        Serial.println("Invalid number of servo target angles.");
                     }
+
+                    if (servoAngles.size() > NUM_OF_SERVOS) {
+                        Serial.println("Warning: More servo target angles received than expected. Ignoring extra values.");
+                    }
+
                 } else {
                     Serial.println("Missing servo_target_angles in JSON");
                 }
