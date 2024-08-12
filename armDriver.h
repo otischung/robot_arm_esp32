@@ -8,7 +8,7 @@
 const float ARM_MOVEMENT_STEP = 0.3;
 
 class ArmManager {
-private:
+   private:
     // static const uint8_t this->numServos = 8;
     static const uint16_t SERVO_MIN_PULSE_WIDTH = 500;
     static const uint16_t SERVO_MAX_PULSE_WIDTH = 2500;
@@ -24,20 +24,23 @@ private:
     void setServoAngle(uint8_t servoNum, float angle) {
         if (servoNum < this->numServos) {
             pwm.writeMicroseconds(
-                    servoNum,
-                    map(angle, 0, 180,
-                        SERVO_MIN_PULSE_WIDTH, SERVO_MAX_PULSE_WIDTH));
+                servoNum,
+                map(
+                    angle, 0, 180,
+                    SERVO_MIN_PULSE_WIDTH, SERVO_MAX_PULSE_WIDTH
+                )
+            );
         }
     }
 
-public:
-    ArmManager(const uint8_t numServos, const uint8_t servoMinAngles[], const uint8_t servoMaxAngles[]) {
+   public:
+    ArmManager(const uint8_t numServos, const uint8_t servoMinAngles[], const uint8_t servoMaxAngles[], const uint8_t servoInitAngles[]) {
         // Initialize the Adafruit_PWMServoDriver object
         this->numServos = numServos;
 
         this->pwm.begin();
         this->pwm.setOscillatorFrequency(27000000);
-        this->pwm.setPWMFreq(50); // Set the PWM frequency to 50Hz
+        this->pwm.setPWMFreq(50);  // Set the PWM frequency to 50Hz
         this->servoTargetAngles = new uint8_t[numServos];
         this->servoCurrentAngles = new float[numServos];
         this->servoMinAngles = new uint8_t[numServos];
@@ -46,8 +49,17 @@ public:
         for (uint8_t i = 0; i < numServos; i++) {
             this->servoMinAngles[i] = servoMinAngles[i];
             this->servoMaxAngles[i] = servoMaxAngles[i];
-            this->servoTargetAngles[i] = 90;
-            this->servoCurrentAngles[i] = 80;
+            this->servoTargetAngles[i] = servoInitAngles[i];
+            // this->servoTargetAngles[i] = 90;
+            /************************************************************************* 
+            You cannot set the current angles by reading the initial angles directly.
+            You can set the current angles to be "near" the initial angles
+                to ensure that the robot arm doesn't perform redundant actions.
+            If you set the current angles to be the same as the initial angles,
+                then the robot arm will not move when starting up.
+            **************************************************************************/
+            this->servoCurrentAngles[i] = (float)servoInitAngles[i] + 1;
+            // this->servoCurrentAngles[i] = 80;
             Serial.printf("this->servoTargetAngles[%d] are ", i);
             Serial.println(this->servoTargetAngles[i]);
             Serial.printf("this->servoCurrentAngles[%d] are ", i);

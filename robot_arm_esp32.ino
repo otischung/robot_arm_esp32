@@ -1,6 +1,7 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <ArduinoJson.h>
 #include <Wire.h>
+
 #include "armDriver.h"
 
 #define UPDATE_ARM_DELAY 1.0
@@ -49,45 +50,45 @@ void setup() {
 
     // Create the arm control task
     for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
-        currentAngles[i] = (float) servoMinAngles[i];
+        currentAngles[i] = (float)servoMinAngles[i];
         targetAngles[i] = servoInitAngles[i];
     }
     // Create the arm control task
     Serial.println("xTaskCreatePinnedToCore armControlTaskFunction ");
     delay(100);
     xTaskCreatePinnedToCore(
-            armControlTaskFunction, // Task function
-            "Arm Control Task",     // Task name
-            2048,                   // Stack size (in bytes)
-            NULL,                   // Task parameters
-            1,                      // Task priority
-            &armControlTask,        // Task handle
-            0                       // Core ID (0 or 1)
+        armControlTaskFunction,  // Task function
+        "Arm Control Task",      // Task name
+        2048,                    // Stack size (in bytes)
+        NULL,                    // Task parameters
+        1,                       // Task priority
+        &armControlTask,         // Task handle
+        0                        // Core ID (0 or 1)
     );
 
     // Create the serial communication task
     Serial.println("xTaskCreatePinnedToCore serialCommunicationTaskFunction ");
     delay(100);
     xTaskCreatePinnedToCore(
-            serialCommunicationTaskFunction, // Task function
-            "Serial Communication Task",     // Task name
-            2048,                            // Stack size (in bytes)
-            NULL,                            // Task parameters
-            3,                               // Task priority
-            &serialCommunicationTask,        // Task handle
-            1                                // Core ID (0 or 1)
+        serialCommunicationTaskFunction,  // Task function
+        "Serial Communication Task",      // Task name
+        2048,                             // Stack size (in bytes)
+        NULL,                             // Task parameters
+        3,                                // Task priority
+        &serialCommunicationTask,         // Task handle
+        1                                 // Core ID (0 or 1)
     );
     // Create the serial communication task
     Serial.println("xTaskCreatePinnedToCore serialWriterTaskFunction ");
     delay(100);
     xTaskCreatePinnedToCore(
-            serialWriterTaskFunction, // Task function
-            "Serial Writer Task",     // Task name
-            2048,                     // Stack size (in bytes)
-            NULL,                     // Task parameters
-            2,                        // Task priority
-            &serialWriterTask,        // Task handle
-            0                         // Core ID (0 or 1)
+        serialWriterTaskFunction,  // Task function
+        "Serial Writer Task",      // Task name
+        2048,                      // Stack size (in bytes)
+        NULL,                      // Task parameters
+        2,                         // Task priority
+        &serialWriterTask,         // Task handle
+        0                          // Core ID (0 or 1)
     );
     delay(100);
 }
@@ -101,7 +102,7 @@ void armControlTaskFunction(void *parameter) {
     // Create an instance of ArmManager
 
     // uint8_t currentAngles[ArmManager::NUM_SERVOS];
-    ArmManager armManager(NUM_OF_SERVOS, servoMinAngles, servoMaxAngles);
+    ArmManager armManager(NUM_OF_SERVOS, servoMinAngles, servoMaxAngles, servoInitAngles);
 
     Serial.println("armControlTaskFunction start");
 
