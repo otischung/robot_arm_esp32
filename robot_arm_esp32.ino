@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "armDriver.h"
 
-#define UPDATE_ARM_DELAY 1.0
+#define UPDATE_ARM_DELAY 5.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
 const uint8_t NUM_OF_SERVOS = 5;
@@ -54,7 +54,7 @@ void setup() {
                 targetAngles[0] = 90;
                 break;
             case 1:
-                targetAngles[1] = 0;
+                targetAngles[1] = 20;
                 break;
             case 2:
                 targetAngles[2] = 160;
@@ -146,9 +146,9 @@ void serialCommunicationTaskFunction(void *parameter) {
         if (Serial.available()) {
             // Read the incoming serial data
             jsonString = Serial.readStringUntil('\n');
-            // String jsonString = Serial.readString();
             Serial.println("receive:");
             Serial.println(jsonString);
+            
             // Parse the JSON string
             StaticJsonDocument<256> doc;
             DeserializationError error = deserializeJson(doc, jsonString);
@@ -163,14 +163,18 @@ void serialCommunicationTaskFunction(void *parameter) {
                     // Get the "servo_target_angles" array from the JSON document
                     JsonArray servoAngles = doc["servo_target_angles"].as<JsonArray>();
 
-                    // Check if the array size matches the number of servos
-                    if (servoAngles.size() == NUM_OF_SERVOS) {
-                        // Update the target angles in the ArmManager
-                        for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
-                            targetAngles[i] = servoAngles[i];
+                    // Ensure we only process up to NUM_OF_SERVOS angles
+                    uint8_t numAngles = (uint8_t)min((uint8_t)servoAngles.size(), NUM_OF_SERVOS);
+
+                    // Update the target angles in the ArmManager
+                    for (uint8_t i = 0; i < numAngles; i++) {
+                        int angle = servoAngles[i];
+                        if (angle != -1) {
+                            targetAngles[i] = angle;
+                        } else {
+                            // Keep the current angle if the value is -1
+                            targetAngles[i] = currentAngles[i];
                         }
-                    } else {
-                        Serial.println("Invalid number of servo target angles.");
                     }
                 } else {
                     Serial.println("Missing servo_target_angles in JSON");
@@ -182,6 +186,7 @@ void serialCommunicationTaskFunction(void *parameter) {
         vTaskDelay(SERIAL_READ_DELAY / portTICK_PERIOD_MS);
     }
 }
+
 
 // Task function for serial writer
 void serialWriterTaskFunction(void *parameter) {
