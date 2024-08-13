@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "armDriver.h"
 
-#define UPDATE_ARM_DELAY 5.0
+#define UPDATE_ARM_DELAY 3.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
 const uint8_t NUM_OF_SERVOS = 5;
@@ -32,21 +32,16 @@ TaskHandle_t armControlTask;
 TaskHandle_t serialCommunicationTask;
 TaskHandle_t serialWriterTask;
 
-// This callback gets called any time a new gamepad is connected.
-// Up to 4 gamepads can be connected at the same time.
-
 // Function declarations
 void armControlTaskFunction(void *parameter);
-
 void serialCommunicationTaskFunction(void *parameter);
-
 void serialWriterTaskFunction(void *parameter);
 
 void setup() {
     // Start serial communication
     Serial.begin(115200);
 
-    // Create the arm control task
+    // Initialize target angles to initial values
     for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
         currentAngles[i] = (float) servoMinAngles[i];
         switch (i) {
@@ -69,6 +64,7 @@ void setup() {
                 break;
         }
     }
+
     // Create the arm control task
     Serial.println("xTaskCreatePinnedToCore armControlTaskFunction ");
     delay(100);
@@ -94,7 +90,8 @@ void setup() {
             &serialCommunicationTask,        // Task handle
             1                                // Core ID (0 or 1)
     );
-    // Create the serial communication task
+
+    // Create the serial writer task
     Serial.println("xTaskCreatePinnedToCore serialWriterTaskFunction ");
     delay(100);
     xTaskCreatePinnedToCore(
@@ -116,8 +113,6 @@ void loop() {
 // Task function for arm control
 void armControlTaskFunction(void *parameter) {
     // Create an instance of ArmManager
-
-    // uint8_t currentAngles[ArmManager::NUM_SERVOS];
     ArmManager armManager(NUM_OF_SERVOS, servoMinAngles, servoMaxAngles);
 
     Serial.println("armControlTaskFunction start");
@@ -129,7 +124,6 @@ void armControlTaskFunction(void *parameter) {
         }
 
         armManager.moveArm();
-        // armManager.printStatus();
         armManager.getCurrentAngles(currentAngles);
         armAction = ArmAction::NO_ACTION;
 
@@ -142,13 +136,14 @@ void armControlTaskFunction(void *parameter) {
 void serialCommunicationTaskFunction(void *parameter) {
     Serial.println("serialCommunicationTaskFunction start ");
     String jsonString = "";
+
     for (;;) {
         if (Serial.available()) {
             // Read the incoming serial data
             jsonString = Serial.readStringUntil('\n');
             Serial.println("receive:");
             Serial.println(jsonString);
-            
+
             // Parse the JSON string
             StaticJsonDocument<256> doc;
             DeserializationError error = deserializeJson(doc, jsonString);
@@ -169,10 +164,10 @@ void serialCommunicationTaskFunction(void *parameter) {
                     // Update the target angles in the ArmManager
                     for (uint8_t i = 0; i < numAngles; i++) {
                         int angle = servoAngles[i];
-                        if (angle != -1) {
+                        if (angle >= 0) {
                             targetAngles[i] = angle;
                         } else {
-                            // Keep the current angle if the value is -1
+                            // Keep the current angle if the value is negative
                             targetAngles[i] = currentAngles[i];
                         }
                     }
@@ -187,7 +182,6 @@ void serialCommunicationTaskFunction(void *parameter) {
     }
 }
 
-
 // Task function for serial writer
 void serialWriterTaskFunction(void *parameter) {
     Serial.println("serialWriterTaskFunction start");
@@ -196,7 +190,6 @@ void serialWriterTaskFunction(void *parameter) {
         StaticJsonDocument<512> doc;
         // Populate the JSON document with the current angles
         JsonArray servoAngles = doc.createNestedArray("servo_current_angles");
-        // armManager.getCurrentAngles(currentAngles);
 
         for (uint8_t i = 0; i < NUM_OF_SERVOS; i++) {
             servoAngles.add(currentAngles[i]);
@@ -208,8 +201,6 @@ void serialWriterTaskFunction(void *parameter) {
 
         // Print the JSON string
         Serial.println(jsonString);
-
-        // Read incoming serial data
 
         // Wait for some time before the next iteration
         vTaskDelay(SERIAL_WRITE_DELAY / portTICK_PERIOD_MS);
