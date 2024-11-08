@@ -7,25 +7,25 @@
 #define UPDATE_ARM_DELAY 1.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
-const uint8_t NUM_OF_SERVOS = 7;
-const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 180, 180, 90, 180, 90, 70};
-const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 10};
+const uint8_t NUM_OF_SERVOS = 11;
+const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 180, 90, 130, 130, 130, 130, 130};
+const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 80, 80, 80, 80, 80};
 
 // Enum to define the arm actions
-enum class ArmAction {
-    NO_ACTION,
-    TURN_BASE_LEFT,
-    TURN_BASE_RIGHT,
-    MOVE_ARM_UP,
-    MOVE_ARM_DOWN,
-    SHIFT_ARM_RIGHT,
-    SHIFT_ARM_LEFT,
-    ROTATE_FINGER_RIGHT,
-    ROTATE_FINGER_LEFT
-};
+// enum class ArmAction {
+//     NO_ACTION,
+//     TURN_BASE_LEFT,
+//     TURN_BASE_RIGHT,
+//     MOVE_ARM_UP,
+//     MOVE_ARM_DOWN,
+//     SHIFT_ARM_RIGHT,
+//     SHIFT_ARM_LEFT,
+//     ROTATE_FINGER_RIGHT,
+//     ROTATE_FINGER_LEFT
+// };
 
-ArmAction armAction = ArmAction::NO_ACTION;
+// ArmAction armAction = ArmAction::NO_ACTION;
 float currentAngles[NUM_OF_SERVOS];
 uint8_t targetAngles[NUM_OF_SERVOS];
 
@@ -115,7 +115,7 @@ void armControlTaskFunction(void *parameter) {
         armManager.moveArm();
         // armManager.printStatus();
         armManager.getCurrentAngles(currentAngles);
-        armAction = ArmAction::NO_ACTION;
+        // armAction = ArmAction::NO_ACTION;
 
         // Wait for some time before the next iteration
         vTaskDelay(UPDATE_ARM_DELAY / portTICK_PERIOD_MS);
