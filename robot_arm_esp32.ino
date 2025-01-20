@@ -7,10 +7,10 @@
 #define UPDATE_ARM_DELAY 1.0
 #define SERIAL_READ_DELAY 10
 #define SERIAL_WRITE_DELAY 250
-const uint8_t NUM_OF_SERVOS = 11;
-const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 180, 90, 130, 130, 130, 130, 130};
-const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 80, 80, 80, 80, 80};
+const uint8_t NUM_OF_SERVOS = 7;
+const uint8_t servoMinAngles[] = {0, 80, 0, 0, 0, 0, 0};
+const uint8_t servoMaxAngles[] = {180, 180, 180, 120, 180, 90, 70};
+const uint8_t servoInitAngles[] = {10, 170, 80, 60, 80, 10, 10};
 
 // Enum to define the arm actions
 // enum class ArmAction {
